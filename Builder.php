@@ -15,17 +15,14 @@ class Builder
      * Used for opening all tags except special tags (ex.: text())
      *
      * @param $method
-     * @param $attributes
+     * @param $parameters
      * @return $this
      */
-    public function __call($tag, $attributes)
+    public function __call($tag, $parameters)
     {
-        $htmlAttributes = isset($attributes[0]) ? $this->attributes($attributes[0]) : null;
+        $attributes = isset($parameters[0]) ? $this->attributes($parameters[0]) : '';
 
-        if($htmlAttributes)
-            $this->content .= "<{$tag}{$htmlAttributes}>";
-        else
-            $this->content .= "<{$tag}>";
+        $this->content .= "<{$tag}{$attributes}>";
         
         if( ! in_array($tag, $this->noClose))
             $this->stack[] = $tag;
@@ -71,7 +68,7 @@ class Builder
      */
     public function attributes(array $attributes)
     {
-        $result = null;
+        $result = '';
 
         foreach($attributes as $key=>$attribute)
             $result .= " {$key}=\"{$attribute}\"";
