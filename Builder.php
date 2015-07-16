@@ -9,7 +9,7 @@ class Builder
 {
 	private $content = '';
 	private $stack = [];
-	private $noClose = ['br', 'link'];
+	private $noClose = ['input', 'br'];
 
     /**
      * Used for opening all tags except special tags (ex.: text())
@@ -18,17 +18,17 @@ class Builder
      * @param $attributes
      * @return $this
      */
-	public function __call($method, $attributes)
+	public function __call($tag, $attributes)
 	{
 		$htmlAttributes = isset($attributes[0]) ? $this->attributes($attributes[0]) : null;
 
 		if($htmlAttributes)
-			$this->content .= "<{$method}{$htmlAttributes}>";
+			$this->content .= "<{$tag}{$htmlAttributes}>";
 		else
-			$this->content .= "<{$method}>";
+			$this->content .= "<{$tag}>";
 		
-		if( ! in_array($method, $this->noClose))
-			$this->stack[] = $method;
+		if( ! in_array($tag, $this->noClose))
+			$this->stack[] = $tag;
 
 		return $this;
 	}
@@ -41,6 +41,9 @@ class Builder
 	public function end()
 	{
 		$tag = array_pop($this->stack);
+
+		if($tag==null)
+			throw new Exception("No more tags to close", 1);
 
 		$this->content .= "</{$tag}>";
 
@@ -81,8 +84,27 @@ class Builder
      *
      * @return string
      */
-	function __toString()
+	public function __toString()
 	{
 		return $this->content;
 	}
+
+	/**
+	 * Add a tag that not must be closed. (ex.: 'br') 
+	 *
+	 */
+	public function addNoClose($noClose)
+	{
+		$this->noClose[] = $noClose;
+	}
+
+	/*
+	 * Set the array of tags tha not must be closed. (ex.: ['br', 'input'])
+	 *
+	 */
+	public function setNoClose(array $noClose = [])
+	{
+		$this->noClose = $noClose;
+	}
+
 }
