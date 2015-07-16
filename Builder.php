@@ -1,6 +1,6 @@
 <?php
 
-namespace Dushica\HTML;
+namespace Dushica\Html;
 
 /**
 * HTML Builder

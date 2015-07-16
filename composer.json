@@ -9,5 +9,10 @@
       "name": "Adriatik Dushica",
       "email": "adriatik.dushica@gmail.com"
     }
-  ]
+  ],
+  "autoload": {
+        "psr-4": {
+            "Dushica\\Html\\": ""
+        }
+    }
 }
