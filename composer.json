@@ -1,0 +1,13 @@
+{
+  "name": "dushica/html",
+  "description": "Simple HTML builder for PHP",
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "authors": [
+    {
+      "name": "Adriatik Dushica",
+      "email": "adriatik.dushica@gmail.com"
+    }
+  ]
+}
