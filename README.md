@@ -9,7 +9,6 @@
 
     //Add one more tag that not must be closed
     $builder->addNoClose('link');
-
     
     //Format html code, by default is true
     $builder->minify = false;
