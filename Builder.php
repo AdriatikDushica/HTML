@@ -10,9 +10,10 @@ class Builder
     private $content = '';
     private $stack = [];
     private $noClose = ['input', 'br'];
+    public $minify = true;
 
     /**
-     * Used for opening all tags except special tags (ex.: text())
+     * Used for opening all tags except special tags (ex.: ->text())
      *
      * @param $method
      * @param $parameters
@@ -20,9 +21,12 @@ class Builder
      */
     public function __call($tag, $parameters)
     {
-        $attributes = isset($parameters[0]) ? $this->attributes($parameters[0]) : '';
+        $attributes = isset($parameters[0]) && is_array($parameters[0]) ? $this->attributes($parameters[0]) : '';
 
-        $this->content .= "<{$tag}{$attributes}>";
+        if( ! $this->minify)
+            $this->fixTab();
+
+        $this->content .= "<{$tag}{$attributes}>" . ( ! $this->minify ? "\n" : "");
         
         if( ! in_array($tag, $this->noClose))
             $this->stack[] = $tag;
@@ -38,11 +42,14 @@ class Builder
     public function end()
     {
         $tag = array_pop($this->stack);
+        
+        if( ! $this->minify)
+            $this->fixTab();
 
         if($tag==null)
             throw new Exception("No more tags to close", 1);
 
-        $this->content .= "</{$tag}>";
+        $this->content .= "</{$tag}>" . ( ! $this->minify ? "\n" : "");
 
         return $this;
     }
@@ -55,7 +62,10 @@ class Builder
      */
     public function text($text)
     {
-        $this->content .= $text;
+        if( ! $this->minify)
+            $this->fixTab();
+
+        $this->content .= $text . ( ! $this->minify ? "\n" : "");
 
         return $this;
     }
@@ -102,6 +112,15 @@ class Builder
     public function setNoClose(array $noClose = [])
     {
         $this->noClose = $noClose;
+    }
+
+    /*
+     * Fix tabs using the number of elements in the stack
+     *
+     */
+    public function fixTab()
+    {
+        for($i=0; $i<count($this->stack); $i++) $this->content .= "\t";
     }
 
 }
